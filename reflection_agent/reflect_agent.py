@@ -4,6 +4,7 @@ import operator
 import os
 from typing import TypedDict, Annotated, Sequence, List
 
+from dotenv import load_dotenv
 from langchain_core.messages import BaseMessage
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_openai import ChatOpenAI
@@ -11,6 +12,8 @@ from langgraph.constants import END
 from langgraph.graph import StateGraph
 from pydantic.v1 import BaseModel
 
+load_dotenv()
+OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
 llm = ChatOpenAI()
 
 
