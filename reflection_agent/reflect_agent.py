@@ -11,14 +11,12 @@ from langgraph.constants import END
 from langgraph.graph import StateGraph
 from pydantic.v1 import BaseModel
 
-
 llm = ChatOpenAI()
 
 
 # The shared state of the agents
 class State(TypedDict):
     messages: Annotated[Sequence[BaseMessage], operator.add]
-
 
 
 class ReflectionAgent(BaseModel):
@@ -38,7 +36,7 @@ class ReflectionAgent(BaseModel):
             MessagesPlaceholder(variable_name="messages"), ])
         generate = generation_prompt | llm
         messages = generate.invoke({"messages": messages})
-        return {"messages":[messages.content]}
+        return {"messages": [messages.content]}
 
     # The first agent in the workflow that critiques the answer
     def critique_answer(self, state: State):
@@ -59,7 +57,7 @@ class ReflectionAgent(BaseModel):
         # original_question = [HumanMessage(content=state[0].content)]
         # answer = [HumanMessage(content=state[-1].content)]
         messages = reflect.invoke({"messages": [original_question + answer]})
-        return {"messages":[messages.content]}
+        return {"messages": [messages.content]}
 
     def should_continue(self, state: List[BaseMessage]):
         if len(state["messages"]) > 8:
@@ -76,3 +74,9 @@ class ReflectionAgent(BaseModel):
         graph_builder.add_edge("critique_agent", "generate_agent")
 
         graph = graph_builder.compile()
+
+        return graph
+
+
+reflection_agent = ReflectionAgent()
+graph = reflection_agent.make_workflow()
