@@ -59,7 +59,7 @@ class ReflectionAgent(BaseModel):
         answer = state["messages"][-1]
         # original_question = [HumanMessage(content=state[0].content)]
         # answer = [HumanMessage(content=state[-1].content)]
-        messages = reflect.invoke({"messages": [original_question + answer]})
+        messages = reflect.invoke({"messages": [str(original_question) + str(answer)]})
         return {"messages": [messages.content]}
 
     def should_continue(self, state: List[BaseMessage]):
